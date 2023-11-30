@@ -15,41 +15,26 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
-type depth struct {
-	node *TreeNode
-	depth int
-}
-
 func rightSideView(root *TreeNode) []int {
 	if root == nil {
 		return []int{}
 	}
-	var queue []depth
-	queue = append(queue, depth{
-		node: root,
-		depth: 0,
-	})
+	var queue []*TreeNode
+	queue = append(queue, root)
 	var r []int
 	for len(queue) != 0 {
-		n := queue[0]
-		if len(r) > n.depth {
-			r[n.depth] = n.node.Val
-		} else {
-			r = append(r, n.node.Val)
+		l := len(queue)
+		n := queue[l-1]
+		r = append(r, n.Val)
+		for i := 0; i < l; i++ {
+			if queue[i].Left != nil {
+				queue = append(queue, queue[i].Left)
+			}
+			if queue[i].Right != nil {
+				queue = append(queue, queue[i].Right)
+			}
 		}
-		if n.node.Left != nil {
-			queue = append(queue, depth{
-				node:  n.node.Left,
-				depth: n.depth + 1,
-			})
-		}
-		if n.node.Right != nil {
-			queue = append(queue, depth{
-				node:  n.node.Right,
-				depth: n.depth + 1,
-			})
-		}
-		queue = queue[1:]
+		queue = queue[l:]
 	}
 	return r
 }
